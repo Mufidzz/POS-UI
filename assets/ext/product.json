@@ -1,0 +1,17 @@
+[
+  {
+    "Id" : "1",
+    "ProductName": "Milkshake Strawawa",
+    "Price": "5000"
+  },
+  {
+    "id" : "2",
+    "ProductName": "Milkshake Strawiwi",
+    "Price": "7000"
+  },
+  {
+    "id" : "3",
+    "ProductName": "Milkshake Strawiwi2",
+    "Price": "7000"
+  }
+]
