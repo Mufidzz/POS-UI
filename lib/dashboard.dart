@@ -265,7 +265,6 @@ class BoughtProductState extends State<BoughtProduct> {
     });
     print("Set State Runn");
   }
-
   @override
   Widget build(BuildContext context) {
     return ListView(
