@@ -251,6 +251,9 @@ class _MainContainerState extends State<MainContainer> {
                   MaterialPageRoute(builder: (context) => DashboardBuyItem(boughtProductModel[index])));
               setState(() {
                 boughtProductModel[index] = res;
+                if(boughtProductModel[index].qty <= 0){
+                  boughtProductList.removeAt(index);
+                }
                 ___updateBoughtItem(boughtProductList);
               });
             },

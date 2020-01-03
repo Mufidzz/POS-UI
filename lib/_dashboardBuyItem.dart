@@ -35,8 +35,66 @@ class MainContainer extends StatefulWidget {
 }
 
 class _MainContainerState extends State<MainContainer> {
+  int ___selectedItem = 0;
+  TextEditingController _notesController = new TextEditingController();
+
+  var currentTextFieldValue = new List<String>();
+  var notesControllerText = new List<String>();
+  var notesControllerTextAfter = new List<String>();
+
+  void checkList(List<String> str) {
+    if (str.isEmpty) {
+      for (int i = 0; i < widget.boughtProductModel.qty; i++) {
+        str.add("");
+      }
+    } else if (str.length < widget.boughtProductModel.qty) {
+      int diff = widget.boughtProductModel.qty - str.length;
+      for (int i = 0; i < diff; i++) {
+        str.add("");
+      }
+    } else if (str.length > widget.boughtProductModel.qty) {
+      int diff = str.length - widget.boughtProductModel.qty;
+      for (int i = 0; i < diff; i++) {
+        str.removeLast();
+      }
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    checkList(notesControllerText);
+    checkList(notesControllerTextAfter);
+    checkList(currentTextFieldValue);
+
+    print(widget.boughtProductModel.sub);
+    var sub = widget.boughtProductModel.sub;
+    var split = sub.split(RegExp(r"Item +[0-9]: ::"));
+    print(split);
+    print(split.length);
+
+    for(int i = 1; i < split.length; i++) {
+      notesControllerText[i-1] = split[i];
+    }
+
+    notesControllerTextAfter[___selectedItem] =
+        notesControllerText[___selectedItem]
+            .replaceAll(RegExp("::"), "\n");
+    _notesController.text =
+    notesControllerTextAfter[
+    ___selectedItem];
+
+    print(notesControllerText);
+    print(notesControllerTextAfter);
+  }
+
+
   @override
   Widget build(BuildContext context) {
+    checkList(notesControllerText);
+    checkList(notesControllerTextAfter);
+    checkList(currentTextFieldValue);
+
     return Column(
       children: <Widget>[
         Container(
@@ -68,9 +126,11 @@ class _MainContainerState extends State<MainContainer> {
                       ),
                       GestureDetector(
                         onTap: () {
-                          setState(() {
-                            widget.boughtProductModel.qty--;
-                          });
+                          if (widget.boughtProductModel.qty > 0) {
+                            setState(() {
+                              widget.boughtProductModel.qty--;
+                            });
+                          }
                         },
                         child: Container(
                           margin: EdgeInsets.only(left: 15),
@@ -112,12 +172,29 @@ class _MainContainerState extends State<MainContainer> {
             padding: EdgeInsets.all(10),
             scrollDirection: Axis.horizontal,
             children: List.generate(widget.boughtProductModel.qty, (index) {
-              return Container(
-                alignment: Alignment.center,
-                margin: EdgeInsets.only(right: 5),
-                color: Colors.amber[600],
-                width: 175,
-                child: Text("Item " + (index + 1).toString()),
+              return GestureDetector(
+                onTap: () {
+                  setState(() {
+                    ___selectedItem = index;
+
+                    notesControllerTextAfter[___selectedItem] =
+                        notesControllerText[___selectedItem]
+                            .replaceAll(RegExp("::"), "\n");
+                    _notesController.text =
+                    notesControllerTextAfter[
+                    ___selectedItem];
+
+                  });
+                },
+                child: Container(
+                  alignment: Alignment.center,
+                  margin: EdgeInsets.only(right: 5),
+                  color: ___selectedItem == index
+                      ? Colors.amber[900]
+                      : Colors.amber[600],
+                  width: 175,
+                  child: Text("Item " + (index + 1).toString()),
+                ),
               );
             }),
           ),
@@ -138,6 +215,40 @@ class _MainContainerState extends State<MainContainer> {
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: <Widget>[
                               GestureDetector(
+                                onTap: () {
+                                  if (notesControllerText[___selectedItem]
+                                      .isEmpty) {
+                                    notesControllerText.insert(
+                                        ___selectedItem, "");
+                                  }
+
+                                  if (notesControllerTextAfter[___selectedItem]
+                                      .isEmpty) {
+                                    notesControllerTextAfter.insert(
+                                        ___selectedItem, "");
+                                  }
+
+                                  if (RegExp("Less Ice::").hasMatch(
+                                      notesControllerText[___selectedItem])) {
+                                    notesControllerText[___selectedItem] =
+                                        notesControllerText[___selectedItem]
+                                            .replaceAll(
+                                                RegExp("Less Ice::"), "");
+                                  } else {
+                                    notesControllerText[___selectedItem] =
+                                        notesControllerText[___selectedItem] +
+                                            "Less Ice::";
+                                  }
+
+                                  setState(() {
+                                    notesControllerTextAfter[___selectedItem] =
+                                        notesControllerText[___selectedItem]
+                                            .replaceAll(RegExp("::"), "\n");
+                                    _notesController.text =
+                                        notesControllerTextAfter[
+                                            ___selectedItem];
+                                  });
+                                },
                                 child: Container(
                                   alignment: Alignment.center,
                                   height: 35,
@@ -146,11 +257,33 @@ class _MainContainerState extends State<MainContainer> {
                                   color: Colors.amber,
                                   child: Text(
                                     "Less Ice",
-                                    style: TextStyle(color: Colors.white),
+                                    style: TextStyle(color: Colors.black),
                                   ),
                                 ),
                               ),
                               GestureDetector(
+                                onTap: () {
+                                  if (RegExp("Less Sugar::").hasMatch(
+                                      notesControllerText[___selectedItem])) {
+                                    notesControllerText[___selectedItem] =
+                                        notesControllerText[___selectedItem]
+                                            .replaceAll(
+                                                RegExp("Less Sugar::"), "");
+                                  } else {
+                                    notesControllerText[___selectedItem] =
+                                        notesControllerText[___selectedItem] +
+                                            "Less Sugar::";
+                                  }
+
+                                  setState(() {
+                                    notesControllerTextAfter[___selectedItem] =
+                                        notesControllerText[___selectedItem]
+                                            .replaceAll(RegExp("::"), "\n");
+                                    _notesController.text =
+                                        notesControllerTextAfter[
+                                            ___selectedItem];
+                                  });
+                                },
                                 child: Container(
                                   alignment: Alignment.center,
                                   height: 35,
@@ -159,7 +292,7 @@ class _MainContainerState extends State<MainContainer> {
                                   color: Colors.amber,
                                   child: Text(
                                     "Less Sugar",
-                                    style: TextStyle(color: Colors.white),
+                                    style: TextStyle(color: Colors.black),
                                   ),
                                 ),
                               ),
@@ -172,6 +305,28 @@ class _MainContainerState extends State<MainContainer> {
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: <Widget>[
                               GestureDetector(
+                                onTap: () {
+                                  if (RegExp("More Ice::").hasMatch(
+                                      notesControllerText[___selectedItem])) {
+                                    notesControllerText[___selectedItem] =
+                                        notesControllerText[___selectedItem]
+                                            .replaceAll(
+                                                RegExp("More Ice::"), "");
+                                  } else {
+                                    notesControllerText[___selectedItem] =
+                                        notesControllerText[___selectedItem] +
+                                            "More Ice::";
+                                  }
+
+                                  setState(() {
+                                    notesControllerTextAfter[___selectedItem] =
+                                        notesControllerText[___selectedItem]
+                                            .replaceAll(RegExp("::"), "\n");
+                                    _notesController.text =
+                                        notesControllerTextAfter[
+                                            ___selectedItem];
+                                  });
+                                },
                                 child: Container(
                                   alignment: Alignment.center,
                                   height: 35,
@@ -180,11 +335,33 @@ class _MainContainerState extends State<MainContainer> {
                                   color: Colors.amber,
                                   child: Text(
                                     "More Ice",
-                                    style: TextStyle(color: Colors.white),
+                                    style: TextStyle(color: Colors.black),
                                   ),
                                 ),
                               ),
                               GestureDetector(
+                                onTap: () {
+                                  if (RegExp("More Sugar::").hasMatch(
+                                      notesControllerText[___selectedItem])) {
+                                    notesControllerText[___selectedItem] =
+                                        notesControllerText[___selectedItem]
+                                            .replaceAll(
+                                                RegExp("More Sugar::"), "");
+                                  } else {
+                                    notesControllerText[___selectedItem] =
+                                        notesControllerText[___selectedItem] +
+                                            "More Sugar::";
+                                  }
+
+                                  setState(() {
+                                    notesControllerTextAfter[___selectedItem] =
+                                        notesControllerText[___selectedItem]
+                                            .replaceAll(RegExp("::"), "\n");
+                                    _notesController.text =
+                                        notesControllerTextAfter[
+                                            ___selectedItem];
+                                  });
+                                },
                                 child: Container(
                                   alignment: Alignment.center,
                                   height: 35,
@@ -193,7 +370,7 @@ class _MainContainerState extends State<MainContainer> {
                                   color: Colors.amber,
                                   child: Text(
                                     "More Sugar",
-                                    style: TextStyle(color: Colors.white),
+                                    style: TextStyle(color: Colors.black),
                                   ),
                                 ),
                               ),
@@ -202,16 +379,21 @@ class _MainContainerState extends State<MainContainer> {
                           Container(
                             height: 10,
                           ),
-                          TextField(
+                          TextFormField(
+                            onChanged: (text) {
+                              notesControllerTextAfter[___selectedItem] = text;
+                              print(notesControllerTextAfter[___selectedItem]);
+                            },
                             cursorColor: Colors.black54,
                             decoration: InputDecoration(
-                              border: InputBorder.none,
+                                border: InputBorder.none,
                                 hintText: 'Enter Notes Here',
                                 fillColor: Colors.white,
                                 filled: true),
                             keyboardType: TextInputType.multiline,
                             maxLines: null,
                             minLines: 4,
+                            controller: _notesController,
                           ),
                         ],
                       )),
@@ -230,6 +412,11 @@ class _MainContainerState extends State<MainContainer> {
                           mainAxisAlignment: MainAxisAlignment.start,
                           children: <Widget>[
                             GestureDetector(
+                              onTap: () {
+                                widget.boughtProductModel.qty = 0;
+                                Navigator.pop(
+                                    context, widget.boughtProductModel);
+                              },
                               child: Container(
                                 alignment: Alignment.center,
                                 height: 35,
@@ -269,8 +456,29 @@ class _MainContainerState extends State<MainContainer> {
                             ),
                             GestureDetector(
                               onTap: () {
+                                var allNotes = "";
+                                for (int i = 0; i < notesControllerTextAfter.length; i++) {
+                                  if(notesControllerTextAfter[i].isNotEmpty || notesControllerTextAfter[i] != ""){
+                                    var splittedNotes = notesControllerTextAfter[i].replaceAll("\n", "::");
+                                    if (i != 0) {
+                                      allNotes += ("::Item " +
+                                          (i + 1).toString() +
+                                          ": ::" +
+                                          splittedNotes);
+                                    } else {
+                                      allNotes += ("Item " +
+                                          (i + 1).toString() +
+                                          ": ::" +
+                                          splittedNotes);
+                                    }
+                                  }
+                                }
+
+                                widget.boughtProductModel.sub = allNotes;
+
                                 Navigator.pop(
                                     context, widget.boughtProductModel);
+
                               },
                               child: Container(
                                 alignment: Alignment.center,
