@@ -69,7 +69,7 @@ class _MainContainerState extends State<MainContainer> {
 
     print(widget.boughtProductModel.sub);
     var sub = widget.boughtProductModel.sub;
-    var split = sub.split(RegExp(r"Item +[0-9]: ::"));
+    var split = sub.split(RegExp(r"Item [0-9]*: ::"));
     print(split);
     print(split.length);
 

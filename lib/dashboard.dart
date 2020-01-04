@@ -7,6 +7,7 @@ import 'package:flutter/services.dart';
 import 'dart:async' show Future;
 import 'package:flutter/services.dart' show rootBundle;
 import '_dashboardBuyItem.dart';
+import '_dashboardPayItem.dart';
 
 class Dashboard extends StatelessWidget {
   @override
@@ -26,9 +27,9 @@ class Dashboard extends StatelessWidget {
                   mainAxisSize: MainAxisSize.max,
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: <Widget>[
-                    Text("Menu A"),
-                    Text("Menu B"),
-                    Text("Menu C"),
+                    Text("Category"),
+                    Text("Variant"),
+                    Text("Best Menu"),
                   ],
                 ),
               )
@@ -136,21 +137,28 @@ class _MainContainerState extends State<MainContainer> {
                                     child: Align(
                                   alignment: Alignment.center,
                                   child: Text(
-                                    "Cetak Bill",
+                                    "Member",
                                     style: TextStyle(color: Colors.black87),
                                   ),
                                 )),
                               ],
                             ),
                           ),
-                          Container(
-                            margin: EdgeInsets.only(top: 5),
-                            height: 48,
-                            color: Colors.amber,
-                            child: Align(
-                              alignment: Alignment.center,
-                              child: Text("Rp. " + __total.toString()),
-                            ),
+
+                          GestureDetector(
+                            onTap: () {
+                              Navigator.push(context,
+                                  MaterialPageRoute(builder: (context) => DashboardPayItem()));
+                            },
+                            child: Container(
+                              margin: EdgeInsets.only(top: 5),
+                              height: 48,
+                              color: Colors.amber,
+                              child: Align(
+                                alignment: Alignment.center,
+                                child: Text("Rp. " + __total.toString()),
+                              ),
+                            ) ,
                           )
                         ],
                       ),

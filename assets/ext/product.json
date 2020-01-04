@@ -1,17 +1,47 @@
 [
   {
     "Id" : "1",
-    "ProductName": "Milkshake Strawawa",
+    "ProductName": "Milkshake A",
     "Price": "5000"
   },
   {
     "Id" : "2",
-    "ProductName": "Milkshake Strawiwi",
+    "ProductName": "Milkshake B",
     "Price": "7000"
   },
   {
     "Id" : "3",
-    "ProductName": "Milkshake Strawiwi2",
+    "ProductName": "Milkshake C",
+    "Price": "7000"
+  },
+  {
+    "Id" : "4",
+    "ProductName": "Milkshake D",
+    "Price": "7000"
+  },
+  {
+    "Id" : "5",
+    "ProductName": "Milkshake E",
+    "Price": "7000"
+  },
+  {
+    "Id" : "6",
+    "ProductName": "Milkshake F",
+    "Price": "7000"
+  },
+  {
+    "Id" : "7",
+    "ProductName": "Milkshake G",
+    "Price": "7000"
+  },
+  {
+    "Id" : "8",
+    "ProductName": "Milkshake H",
+    "Price": "7000"
+  },
+  {
+    "Id" : "9",
+    "ProductName": "Milkshake I",
     "Price": "7000"
   }
 ]
