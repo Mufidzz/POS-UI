@@ -8,6 +8,8 @@ import 'dart:async' show Future;
 import 'package:flutter/services.dart' show rootBundle;
 import '_dashboardBuyItem.dart';
 import '_dashboardPayItem.dart';
+import 'option.dart';
+import 'orderHistory.dart';
 
 class Dashboard extends StatelessWidget {
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
@@ -29,13 +31,14 @@ class Dashboard extends StatelessWidget {
               ListTile(
                 title: Text('Order History'),
                 onTap: () {
-                  Navigator.pop(context);
+                  Navigator.push(context, MaterialPageRoute(builder: (context) => OrderHistory()));
                 },
               ),
               ListTile(
                 title: Text('Option'),
                 onTap: () {
                   Navigator.pop(context);
+                  Navigator.push(context, MaterialPageRoute(builder: (context) => Option()));
                 },
               ),
               ListTile(
@@ -73,6 +76,8 @@ class Dashboard extends StatelessWidget {
         body: MainContainer());
   }
 }
+
+var productList = new List<Product>();
 
 class MainContainer extends StatefulWidget {
   @override
@@ -244,6 +249,8 @@ class _MainContainerState extends State<MainContainer> {
                                     setState(() {
                                       __discountPercent =
                                           int.parse(appliedMember.discountRate);
+
+                                      ___updateBoughtItem(boughtProductList);
                                     });
                                   },
                                   child: Align(
@@ -324,6 +331,7 @@ class _MainContainerState extends State<MainContainer> {
   }
 
   Widget _productGridView({List<Product> product}) {
+    productList = product;
     return GridView.count(
       primary: false,
       padding: EdgeInsets.all(20),
@@ -499,7 +507,7 @@ List<Product> parseProduct(String myJson) {
 }
 
 Future<List<Product>> fetchProduct() async {
-  await wait(5);
+  await wait(1);
   String jsonString = await _loadAProductAsset();
   return compute(parseProduct, jsonString);
 }

@@ -16,5 +16,10 @@
     "MemberId": "4",
     "MemberName": "Bahtiar",
     "MemberDiscount": "99"
+  },
+  {
+    "MemberId": "5",
+    "MemberName": "Wiwi",
+    "MemberDiscount": "10"
   }
 ]

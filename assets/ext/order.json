@@ -1,4 +1,26 @@
-{
-  "timestamp" : "14/03/2020",
-  "item" : "1x3;7x1;22;8x9"
-}
+[
+  {
+    "orderId": "#442312-1",
+    "timestamp": "14/03/2020",
+    "item": "1x3;7x1;2x8;8x9",
+    "refundedItem" : "1x1;8x4"
+  },
+  {
+    "orderId": "#442312-2",
+    "timestamp": "14/03/2020",
+    "item": "1x3;7x1;2x2",
+    "refundedItem" : ""
+  },
+  {
+    "orderId": "#442312-3",
+    "timestamp": "14/03/2020",
+    "item": "1x3;7x1;2x2;8x9",
+    "refundedItem" : ""
+  },
+  {
+    "orderId": "#442312-4",
+    "timestamp": "14/03/2020",
+    "item": "1x3;7x1;2x2;8x9",
+    "refundedItem" : ""
+  }
+]
