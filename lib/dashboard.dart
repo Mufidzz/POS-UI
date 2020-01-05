@@ -10,9 +10,43 @@ import '_dashboardBuyItem.dart';
 import '_dashboardPayItem.dart';
 
 class Dashboard extends StatelessWidget {
+  final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+        key: _scaffoldKey,
+        drawer: Drawer(
+          child: ListView(
+            padding: EdgeInsets.zero,
+            children: <Widget>[
+              DrawerHeader(
+                child: Text('Orangiro POS Logo'),
+                decoration: BoxDecoration(
+                  color: Colors.amber,
+                ),
+              ),
+              ListTile(
+                title: Text('Order History'),
+                onTap: () {
+                  Navigator.pop(context);
+                },
+              ),
+              ListTile(
+                title: Text('Option'),
+                onTap: () {
+                  Navigator.pop(context);
+                },
+              ),
+              ListTile(
+                title: Text('Logout'),
+                onTap: () {
+                  Navigator.pop(context);
+                },
+              ),
+            ],
+          ),
+        ),
         bottomNavigationBar: BottomAppBar(
           color: Colors.amber,
           child: new Row(
@@ -20,7 +54,7 @@ class Dashboard extends StatelessWidget {
             children: <Widget>[
               IconButton(
                 icon: Icon(Icons.menu),
-                onPressed: () => {},
+                onPressed: () => {_scaffoldKey.currentState.openDrawer()},
               ),
               Expanded(
                 child: Row(
@@ -51,6 +85,64 @@ class _MainContainerState extends State<MainContainer> {
   int __discountPercent = 0;
   int __discount = 0;
   int __total = 0;
+  var appliedMember = new Member();
+
+  Dialog memberDialog() {
+    return Dialog(
+        elevation: 0,
+        child: Container(
+            decoration: BoxDecoration(border: Border.all(color: Colors.amber)),
+            padding: EdgeInsets.all(15),
+            child: Wrap(
+              children: <Widget>[
+                Column(
+                  children: <Widget>[
+                    Container(
+                        height: MediaQuery.of(context).size.height * 0.6,
+                        child: FutureBuilder<List<Member>>(
+                          future: fetchMember(),
+                          builder: (context, snapshot) {
+                            if (snapshot.hasError) print(snapshot.error);
+                            return snapshot.hasData
+                                ? ListView(
+                                    children: List.generate(
+                                        snapshot.data.length, (index) {
+                                      return Card(
+                                        child: ListTile(
+                                          onTap: () {
+                                            Navigator.pop(
+                                                context, snapshot.data[index]);
+                                          },
+                                          title: Text(snapshot
+                                              .data[index].memberName
+                                              .toString()),
+                                          trailing: Icon(Icons.check_box),
+                                        ),
+                                      );
+                                    }),
+                                  )
+                                : Center(child: CircularProgressIndicator());
+                          },
+                        )),
+                    Divider(),
+                    Container(
+                      height: 30,
+                      child: Row(
+                        children: <Widget>[
+                          FlatButton(
+                            onPressed: () {
+                              Navigator.pop(context, Member());
+                            },
+                            child: Text("Cancel"),
+                          ),
+                        ],
+                      ),
+                    )
+                  ],
+                )
+              ],
+            )));
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -81,13 +173,19 @@ class _MainContainerState extends State<MainContainer> {
                               mainAxisAlignment: MainAxisAlignment.center,
                               crossAxisAlignment: CrossAxisAlignment.center,
                               children: <Widget>[
-                                Container(
-                                  height: 58,
-                                  width: 58,
-                                  color: Color.fromRGBO(249, 166, 2, 0.5),
-                                  child: Icon(
-                                    Icons.add,
-                                    size: 32,
+                                GestureDetector(
+                                  onTap: () {
+                                    //TODO: Get Order Number
+                                    ___resetBoughtItem();
+                                  },
+                                  child: Container(
+                                    height: 58,
+                                    width: 58,
+                                    color: Color.fromRGBO(249, 166, 2, 0.5),
+                                    child: Icon(
+                                      Icons.add,
+                                      size: 32,
+                                    ),
                                   ),
                                 ),
                                 Expanded(
@@ -98,7 +196,7 @@ class _MainContainerState extends State<MainContainer> {
                                               color: Color.fromRGBO(
                                                   249, 166, 2, 0.5))),
                                       child: Align(
-                                        child: Text("#1234567890"),
+                                        child: Text("#1119-1"),
                                       )),
                                 )
                               ],
@@ -134,21 +232,38 @@ class _MainContainerState extends State<MainContainer> {
                                   ),
                                 )),
                                 Expanded(
-                                    child: Align(
-                                  alignment: Alignment.center,
-                                  child: Text(
-                                    "Member",
-                                    style: TextStyle(color: Colors.black87),
+                                    child: GestureDetector(
+                                  onTap: () async {
+                                    final member = await Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) =>
+                                                memberDialog()));
+                                    appliedMember = member;
+
+                                    setState(() {
+                                      __discountPercent =
+                                          int.parse(appliedMember.discountRate);
+                                    });
+                                  },
+                                  child: Align(
+                                    alignment: Alignment.center,
+                                    child: Text(
+                                      "Member",
+                                      style: TextStyle(color: Colors.black87),
+                                    ),
                                   ),
                                 )),
                               ],
                             ),
                           ),
-
                           GestureDetector(
                             onTap: () {
-                              Navigator.push(context,
-                                  MaterialPageRoute(builder: (context) => DashboardPayItem()));
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => DashboardPayItem(
+                                          boughtProductList, __total)));
                             },
                             child: Container(
                               margin: EdgeInsets.only(top: 5),
@@ -156,9 +271,10 @@ class _MainContainerState extends State<MainContainer> {
                               color: Colors.amber,
                               child: Align(
                                 alignment: Alignment.center,
-                                child: Text("Rp. " + __total.toString()),
+                                child: Text(
+                                    "Pay (Rp. " + __total.toString() + ")"),
                               ),
-                            ) ,
+                            ),
                           )
                         ],
                       ),
@@ -186,11 +302,11 @@ class _MainContainerState extends State<MainContainer> {
     setState(() {
       __subtotal = 0;
 
-      for(int i = 0 ; i < boughtProductModelList.length ; i++) {
-        __subtotal += boughtProductModelList[i].qty * int.parse(boughtProductModelList[i].product.productPrice);
+      for (int i = 0; i < boughtProductModelList.length; i++) {
+        __subtotal += boughtProductModelList[i].qty *
+            int.parse(boughtProductModelList[i].product.productPrice);
       }
-      __discount =
-          ((__discountPercent * __subtotal) ~/ 100).toInt();
+      __discount = ((__discountPercent * __subtotal) ~/ 100).toInt();
       __total = __subtotal - __discount;
     });
   }
@@ -200,7 +316,6 @@ class _MainContainerState extends State<MainContainer> {
       future: fetchProduct(),
       builder: (context, snapshot) {
         if (snapshot.hasError) print(snapshot.error);
-
         return snapshot.hasData
             ? _productGridView(product: snapshot.data)
             : Center(child: CircularProgressIndicator());
@@ -255,11 +370,14 @@ class _MainContainerState extends State<MainContainer> {
       children: List.generate(boughtProductModel.length, (index) {
         return GestureDetector(
             onTap: () async {
-              final res = await Navigator.push(context,
-                  MaterialPageRoute(builder: (context) => DashboardBuyItem(boughtProductModel[index])));
+              final res = await Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) =>
+                          DashboardBuyItem(boughtProductModel[index])));
               setState(() {
                 boughtProductModel[index] = res;
-                if(boughtProductModel[index].qty <= 0){
+                if (boughtProductModel[index].qty <= 0) {
                   boughtProductList.removeAt(index);
                 }
                 ___updateBoughtItem(boughtProductList);
@@ -307,6 +425,9 @@ class _MainContainerState extends State<MainContainer> {
                 mainAxisAlignment: MainAxisAlignment.start,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
+                  Text('Member',
+                      style:
+                          TextStyle(fontSize: 10, fontWeight: FontWeight.bold)),
                   Text('Subtotal',
                       style:
                           TextStyle(fontSize: 10, fontWeight: FontWeight.bold)),
@@ -323,6 +444,12 @@ class _MainContainerState extends State<MainContainer> {
                 mainAxisSize: MainAxisSize.max,
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: <Widget>[
+                  Text(
+                      appliedMember.memberName == null ||
+                              appliedMember.memberName == ""
+                          ? "No Member"
+                          : appliedMember.memberName,
+                      style: TextStyle(fontSize: 10)),
                   Text('Rp ' + __subtotal.toString(),
                       style: TextStyle(fontSize: 10)),
                   Text(
@@ -381,17 +508,46 @@ Future wait(int s) {
   return new Future.delayed(Duration(seconds: s), () => {});
 }
 
+class Member {
+  String memberId;
+  String memberName;
+  String discountRate;
+
+  Member({this.memberId, this.discountRate, this.memberName});
+
+  factory Member.fromJson(Map<String, dynamic> parsedJson) {
+    return Member(
+        memberId: parsedJson['MemberId'],
+        memberName: parsedJson['MemberName'],
+        discountRate: parsedJson['MemberDiscount']);
+  }
+}
+
+Future<String> _loadAMemberAsset() async {
+  return await rootBundle.loadString('assets/ext/member.json');
+}
+
+List<Member> parseMember(String myJson) {
+  final parsed = json.decode(myJson).cast<Map<String, dynamic>>();
+  return parsed.map<Member>((json) => Member.fromJson(json)).toList();
+}
+
+Future<List<Member>> fetchMember() async {
+  String jsonString = await _loadAMemberAsset();
+  return compute(parseMember, jsonString);
+}
+
 class BoughtProductModel {
   Product product;
   int qty;
   String sub;
   int subtotal;
 
-  BoughtProductModel({this.product, this.qty, this.sub}){
+  BoughtProductModel({this.product, this.qty, this.sub}) {
     subtotal = qty * int.parse(product.productPrice);
   }
 
-  BoughtProductModel.refresh(){
+  BoughtProductModel.refresh() {
     subtotal = qty * int.parse(product.productPrice);
   }
 }

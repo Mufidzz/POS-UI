@@ -1,0 +1,20 @@
+[
+  {
+    "MemberId": "1",
+    "MemberName": "Mufid",
+    "MemberDiscount": "99"
+  },{
+    "MemberId": "2",
+    "MemberName": "Zukhruf",
+    "MemberDiscount": "99"
+  },{
+    "MemberId": "3",
+    "MemberName": "Bahtiar",
+    "MemberDiscount": "99"
+  },
+  {
+    "MemberId": "4",
+    "MemberName": "Bahtiar",
+    "MemberDiscount": "99"
+  }
+]

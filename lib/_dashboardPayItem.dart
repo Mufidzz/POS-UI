@@ -1,17 +1,30 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'dashboard.dart';
 
 class DashboardPayItem extends StatelessWidget {
+  var boughtProductList = new List<BoughtProductModel>();
+  int total;
+
+  DashboardPayItem(this.boughtProductList, this.total);
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
         resizeToAvoidBottomPadding: false,
         resizeToAvoidBottomInset: false,
-        body: Container(alignment: Alignment.center, child: MainContainer()));
+        body: Container(
+            alignment: Alignment.center,
+            child: MainContainer(boughtProductList, total)));
   }
 }
 
 class MainContainer extends StatefulWidget {
+  var boughtProductList = new List<BoughtProductModel>();
+  int total;
+
+  MainContainer(this.boughtProductList, this.total);
+
   @override
   MainContainerState createState() {
     return MainContainerState();
@@ -19,6 +32,21 @@ class MainContainer extends StatefulWidget {
 }
 
 class MainContainerState extends State<MainContainer> {
+  int change = 0;
+  int itemCount = 0;
+
+  TextEditingController __amountController = new TextEditingController();
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    widget.boughtProductList.forEach((e) {
+      itemCount += e.qty;
+    });
+    change = 0 - widget.total;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -45,7 +73,7 @@ class MainContainerState extends State<MainContainer> {
                     ),
                     Container(
                       alignment: Alignment.centerLeft,
-                      child: Text("Rp. 17000",
+                      child: Text("Rp. " + widget.total.toString(),
                           style: TextStyle(
                               fontWeight: FontWeight.bold, fontSize: 46)),
                     ),
@@ -59,9 +87,11 @@ class MainContainerState extends State<MainContainer> {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: <Widget>[
-                      Text("Change : Rp. 0",style: TextStyle(fontSize: 16)),
-                      Text("Item Count : 30 Item(s)",style: TextStyle(fontSize: 16)),
-                      Text("Member : Member A",style: TextStyle(fontSize: 16)),
+                      Text("Change : Rp. " + change.toString(),
+                          style: TextStyle(fontSize: 16)),
+                      Text("Item Count : " + itemCount.toString() + " Item(s)",
+                          style: TextStyle(fontSize: 16)),
+                      Text("Member : Member A", style: TextStyle(fontSize: 16)),
                     ],
                   )),
             ],
@@ -87,46 +117,89 @@ class MainContainerState extends State<MainContainer> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: <Widget>[
-                        Container(
-                          color: Colors.amber,
-                          alignment: Alignment.center,
-                          height: 40,
-                          width: MediaQuery.of(context).size.width * 0.2,
-                          child: Text("17000"),
+                        GestureDetector(
+                          onTap: () {
+                            setState(() {
+                              __amountController.text = widget.total.toString();
+                              change = int.parse(__amountController.text) - widget.total;
+
+                            });
+                          },
+                          child: Container(
+                            color: Colors.amber,
+                            alignment: Alignment.center,
+                            height: 40,
+                            width: MediaQuery.of(context).size.width * 0.2,
+                            child: Text(widget.total.toString()),
+                          ),
                         ),
-                        Container(
-                          color: Colors.amber,
-                          alignment: Alignment.center,
-                          height: 40,
-                          width: MediaQuery.of(context).size.width * 0.2,
-                          child: Text("20000"),
+                        GestureDetector(
+                          onTap: () {
+                            setState(() {
+                              __amountController.text = (widget.total +
+                                      (5000 - (widget.total % 5000)))
+                                  .toString();
+                              change = int.parse(__amountController.text) - widget.total;
+
+                            });
+                          },
+                          child: Container(
+                            color: Colors.amber,
+                            alignment: Alignment.center,
+                            height: 40,
+                            width: MediaQuery.of(context).size.width * 0.2,
+                            child: Text(
+                                (widget.total + (5000 - (widget.total % 5000)))
+                                    .toString()),
+                          ),
                         ),
-                        Container(
-                          color: Colors.amber,
-                          alignment: Alignment.center,
-                          height: 40,
-                          width: MediaQuery.of(context).size.width * 0.2,
-                          child: Text("50000"),
-                        ),
-                        Container(
-                          color: Colors.amber,
-                          alignment: Alignment.center,
-                          height: 40,
-                          width: MediaQuery.of(context).size.width * 0.2,
-                          child: Text("100000"),
-                        )
+                        GestureDetector(
+                            onTap: () {
+                              setState(() {
+                                __amountController.text = 50000.toString();
+                                change = int.parse(__amountController.text) - widget.total;
+
+                              });
+                            },
+                            child: Container(
+                              color: Colors.amber,
+                              alignment: Alignment.center,
+                              height: 40,
+                              width: MediaQuery.of(context).size.width * 0.2,
+                              child: Text((50000).toString()),
+                            )),
+                        GestureDetector(
+                            onTap: () {
+                              setState(() {
+                                __amountController.text = 100000.toString();
+                                change = int.parse(__amountController.text) - widget.total;
+                              });
+                            },
+                            child: Container(
+                              color: Colors.amber,
+                              alignment: Alignment.center,
+                              height: 40,
+                              width: MediaQuery.of(context).size.width * 0.2,
+                              child: Text((100000).toString()),
+                            )),
                       ],
                     ),
                     SizedBox(
                       height: 10,
                     ),
                     TextFormField(
+                      onChanged: (text) {
+                        setState(() {
+                          change = int.parse(text) - widget.total;
+                        });
+                      },
                       keyboardType: TextInputType.number,
                       decoration: InputDecoration(
                           border: InputBorder.none,
                           hintText: 'Enter Amount',
                           fillColor: Colors.white,
                           filled: true),
+                      controller: __amountController,
                     ),
                     Divider(),
                     Container(
@@ -212,27 +285,42 @@ class MainContainerState extends State<MainContainer> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: <Widget>[
-                  Container(
-                    color: Colors.amber,
-                    alignment: Alignment.center,
-                    height: 35,
-                    width:
-                    MediaQuery.of(context).size.width * 0.225,
-                    child: Text("Cancel"),
+                  GestureDetector(
+                    onTap: () {
+                      Navigator.pop(context);
+                    },
+                    child: Container(
+                      color: Colors.amber,
+                      alignment: Alignment.center,
+                      height: 35,
+                      width: MediaQuery.of(context).size.width * 0.225,
+                      child: Text("Cancel"),
+                    ),
                   ),
-                  Container(
-                    color: Colors.amber,
-                    alignment: Alignment.center,
-                    height: 35,
-                    width:
-                    MediaQuery.of(context).size.width * 0.225,
-                    child: Text("Pay"),
-                  ),
+                  GestureDetector(
+                      onTap: () {
+                        String f = "";
+                        for (int i = 0;
+                            i < widget.boughtProductList.length;
+                            i++) {
+                          f += widget.boughtProductList[i].product.productId
+                                  .toString() +
+                              "x" +
+                              widget.boughtProductList[i].qty.toString() +
+                              ";";
+                        }
+                        print(f);
+                      },
+                      child: Container(
+                        color: Colors.amber,
+                        alignment: Alignment.center,
+                        height: 35,
+                        width: MediaQuery.of(context).size.width * 0.225,
+                        child: Text("Pay"),
+                      )),
                 ],
               ),
-            )
-
-            )
+            ))
       ],
     );
   }

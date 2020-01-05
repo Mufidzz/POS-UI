@@ -473,7 +473,6 @@ class _MainContainerState extends State<MainContainer> {
                                     }
                                   }
                                 }
-
                                 widget.boughtProductModel.sub = allNotes;
 
                                 Navigator.pop(
